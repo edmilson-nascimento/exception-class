@@ -1,5 +1,25 @@
+CLASS priority DEFINITION CREATE PUBLIC.
 
-METHOD get_bc_working.
+  PUBLIC SECTION.
+    TYPES:
+      BEGIN OF ty_bc,
+        user      TYPE zcc-bc,
+        name_text TYPE adrp-name_text,
+      END OF ty_bc,
+      tab_bc TYPE SORTED TABLE OF ty_bc WITH UNIQUE KEY user.
+
+    METHODS get_bc_working
+      IMPORTING im_list       TYPE tab_bc
+      RETURNING VALUE(result) TYPE zcc-bc
+      RAISING   lcx_exception.
+
+  PRIVATE SECTION.
+
+ENDCLASS.
+
+CLASS priority IMPLEMENTATION.
+
+  METHOD get_bc_working.
 
     DATA:
       select_value TYPE ty_bc,
@@ -20,14 +40,14 @@ METHOD get_bc_working.
 
     CALL FUNCTION 'HELP_VALUES_GET_WITH_TABLE'
       IMPORTING
-        select_value              = select_value     " selected value
+        select_value              = select_value
       TABLES
-        fields                    = fields           " internal table for transfer of the
-        valuetab                  = valuetab         " internal table for transfer of the
+        fields                    = fields
+        valuetab                  = valuetab
       EXCEPTIONS
-        field_not_in_ddic         = 1                " Table field not listed in the Dict
-        more_then_one_selectfield = 2                " During selection, only transfer of
-        no_selectfield            = 3                " No field selected for transfer
+        field_not_in_ddic         = 1
+        more_then_one_selectfield = 2
+        no_selectfield            = 3
         OTHERS                    = 4.
     IF sy-subrc <> 0.
       RETURN.
@@ -42,31 +62,4 @@ METHOD get_bc_working.
 
   ENDMETHOD.
 
-
-
-
-  
-CLASS priority DEFINITION CREATE PUBLIC.
-
-    PUBLIC SECTION.
-
-  
-    PRIVATE SECTION.
-  
-      TYPES:
-        BEGIN OF ty_bc,
-          user      TYPE zcc-bc,
-          name_text TYPE adrp-name_text,
-        END OF ty_bc,
-        tab_bc        TYPE SORTED TABLE OF ty_bc WITH UNIQUE KEY user,
-  
-      METHODS get_bc_working
-        IMPORTING im_list       TYPE tab_bc
-        RETURNING VALUE(result) TYPE zcc-bc
-        RAISING   lcx_exception.
-
-    ENDCLASS.
-
-CLASS priority IMPLEMENTATION.
-    
 ENDCLASS.
